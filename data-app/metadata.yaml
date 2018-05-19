@@ -1,0 +1,14 @@
+name: data-app
+summary: Example consumer application (php pages/webapp) representing a data-app
+maintainer: Ciberth
+description: |
+  Todo 
+tags:
+  - ops
+subordinate: false
+provides:
+  website:
+    interface: http
+requires:
+  mysqlgdb:
+    interface: generic-database
