@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="100px"
+   height="100px"
+   viewBox="0 0 100 100"
+   version="1.1"
+   id="svg18"
+   sodipodi:docname="stats.svg"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+  <metadata
+     id="metadata22">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>eclispe-che</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1366"
+     inkscape:window-height="705"
+     id="namedview20"
+     showgrid="false"
+     inkscape:pagecheckerboard="true"
+     inkscape:zoom="1.668772"
+     inkscape:cx="-10.343107"
+     inkscape:cy="15.862838"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <!-- Generator: Sketch 45.2 (43514) - http://www.bohemiancoding.com/sketch -->
+  <title
+     id="title2">eclispe-che</title>
+  <desc
+     id="desc4">Created with Sketch.</desc>
+  <defs
+     id="defs7">
+    <path
+       d="M50.0004412,4.04252804e-14 C22.3871247,4.04252804e-14 0,22.3848726 0,49.9995588 C0,77.6133626 22.3871247,100 50.0004412,100 C77.6137577,100 100,77.6133626 100,49.9995588 C100,22.3848726 77.6128753,3.55271368e-14 50.0004412,4.04252804e-14 Z"
+       id="path-1" />
+  </defs>
+  <g
+     inkscape:groupmode="layer"
+     id="layer1"
+     inkscape:label="BACKGROUND">
+    <g
+       style="fill:#ffde00;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1;stroke-opacity:1"
+       id="Page-1">
+      <g
+         id="eclispe-che"
+         style="fill:#ffde00;fill-opacity:1;stroke:none;stroke-opacity:1">
+        <g
+           id="path3023-path"
+           style="fill:#ffde00;fill-opacity:1;stroke:none;stroke-opacity:1">
+          <use
+             xlink:href="#path-1"
+             id="use9"
+             style="fill:#ffde00;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-opacity:1"
+             x="0"
+             y="0"
+             width="100%"
+             height="100%" />
+          <path
+             d="M 50.000441,0.5 C 22.662621,0.5 0.5,22.661661 0.5,49.999559 0.5,77.337051 22.663098,99.5 50.000441,99.5 77.337613,99.5 99.5,77.337222 99.5,49.999559 99.5,22.661796 77.337514,0.5 50.000441,0.5 Z"
+             id="path11"
+             style="fill:#ffde00;fill-opacity:1;stroke:none;stroke-width:1;stroke-opacity:1"
+             inkscape:connector-curvature="0" />
+        </g>
+      </g>
+    </g>
+    <g
+       id="g836"
+       transform="matrix(0.1128178,0,0,0.1128178,22.867358,21.723055)">
+      <g
+         id="icomoon-ignore" />
+      <path
+         id="path824"
+         d="m 64,448 h 448 v 64 H 0 V 0 h 64 z m 80,-32 c -26.51,0 -48,-21.49 -48,-48 0,-26.51 21.49,-48 48,-48 1.414,0 2.811,0.074 4.194,0.193 L 199.79,234.2 c -4.92,-7.535 -7.79,-16.531 -7.79,-26.201 0,-26.51 21.49,-48 48,-48 26.51,0 48,21.49 48,48 0,9.671 -2.87,18.666 -7.79,26.201 l 51.596,85.993 c 1.383,-0.119 2.78,-0.193 4.194,-0.193 1.068,0 2.124,0.047 3.175,0.115 L 424.353,171.054 C 419.085,163.35 416,154.036 416,143.999 c 0,-26.51 21.49,-48 48,-48 26.51,0 48,21.49 48,48 0,26.51 -21.49,48 -48,48 -1.07,0 -2.124,-0.047 -3.175,-0.116 l -85.178,149.062 c 5.268,7.703 8.353,17.018 8.353,27.055 0,26.51 -21.49,48 -48,48 -26.51,0 -48,-21.49 -48,-48 0,-9.67 2.87,-18.666 7.789,-26.201 l -51.595,-85.992 c -1.383,0.119 -2.78,0.193 -4.194,0.193 -1.414,0 -2.811,-0.073 -4.194,-0.193 L 184.21,341.8 c 4.92,7.534 7.79,16.53 7.79,26.2 0,26.51 -21.49,48 -48,48 z"
+         inkscape:connector-curvature="0" />
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="PLACE LOGO HERE" />
+</svg>
