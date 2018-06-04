@@ -39,14 +39,14 @@ def waiting_for_db():
 @when_not('endpoint.postgresqlgdb.connected')
 def request_postgresql_db():
     endpoint = endpoint_from_flag('endpoint.postgresqlgdb.joined')
-    endpoint.request('postgresql')
+    endpoint.request('postgresql', 'items')
     status_set('maintenance', 'Requesting postgresql gdb')
 
 @when('endpoint.mysqlgdb.joined')
 @when_not('endpoint.mysqlgdb.connected')
 def request_mysql_db():
     endpoint = endpoint_from_flag('endpoint.mysqlgdb.joined')
-    endpoint.request('mysql')
+    endpoint.request('mysql', 'users')
     status_set('maintenance', 'Requesting mysql gdb')
 
 

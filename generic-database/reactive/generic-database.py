@@ -34,8 +34,6 @@ def ready():
     host.service_reload('apache2')
     status_set('active', 'apache ready - gdb not concrete')
 
-# only postgres for now, but same idea for mysql, mongo for following 2 functions
-
 ###############################################
 #
 # Postgresql support
@@ -45,8 +43,11 @@ def ready():
 
 @when('pgsqldb.connected', 'endpoint.generic-database.postgresql.requested')
 def request_postgresql_db():
+    db_request_endpoint = endpoint_from_flag('endpoint.generic-database.postgresql.requested')
+    databasename = db_request_endpoint.databasename()
+
     pgsql_endpoint = endpoint_from_flag('pgsqldb.connected')
-    pgsql_endpoint.set_database('dbname_abc')
+    pgsql_endpoint.set_database(databasename)
     status_set('maintenance', 'Requesting pgsql db')
 
 
@@ -104,7 +105,7 @@ def request_mysql_db():
 
     mysql_endpoint = endpoint_from_flag('mysqldb.connected')
     mysql_endpoint.configure(databasename, 'gdb_mysql_user', prefix="gdb")
-    # potential todo add support for username
+    # potential todo add support for username but since postgres interface does not allow this ...
     status_set('maintenance', 'Requesting mysql db')
 
 
@@ -131,7 +132,8 @@ def render_mysql_config_and_share_details():
 
     try:
         with connection.cursor() as cursor:
-            sql = 'CREATE TABLE TESTERS (id int, string varchar(255);'
+            #sql = 'CREATE TABLE TESTERSSS (id int, string varchar(255));'
+            sql = 'GRANT ALL PRIVILEGES ON' + mysql_endpoint.database("gdb") + '.* to ;'
             cursor.execute(sql)
 
         connection.commit()
