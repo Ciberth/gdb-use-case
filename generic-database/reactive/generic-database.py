@@ -2,12 +2,14 @@
 
 import pwd
 import os
+import pymysql.cursors
 from subprocess import call
 from charmhelpers.core import host
 from charmhelpers.core.hookenv import log, status_set, config
 from charmhelpers.core.templating import render
 from charms.reactive import when, when_not, set_flag, clear_flag, when_file_changed, endpoint_from_flag
 from charms.reactive import Endpoint
+
 
 # Once this generic database becomes concrete the following dictionary will keep all information
 
@@ -93,12 +95,16 @@ def render_pgsql_config_and_share_details():
 #
 ###############################################
 
+
+
 @when('mysqldb.connected', 'endpoint.generic-database.mysql.requested')
 def request_mysql_db():
+    db_request_endpoint = endpoint_from_flag('endpoint.generic-database.mysql.requested')
+    databasename = db_request_endpoint.databasename()
+
     mysql_endpoint = endpoint_from_flag('mysqldb.connected')
-    mysql_endpoint.configure('gdb_mysql_db', 'gdb_mysql_user', prefix="gdb")
-    # todo
-    # username = unit-name-user ; password = generated ; dbname = unit-name-db ; prefix = gdb (only 1 db anyways)
+    mysql_endpoint.configure(databasename, 'gdb_mysql_user', prefix="gdb")
+    # potential todo add support for username
     status_set('maintenance', 'Requesting mysql db')
 
 
@@ -106,13 +112,32 @@ def request_mysql_db():
 def render_mysql_config_and_share_details():   
     mysql_endpoint = endpoint_from_flag('mysqldb.available')
     
-    # fill dictionary 
+    # fill dictionary for later if other charms want to connect to the same database
     db_details['technology'] = "mysql"
     db_details['password'] = mysql_endpoint.password("gdb")
     db_details['dbname'] = mysql_endpoint.database("gdb")
     db_details['host'] = mysql_endpoint.db_host()
     db_details['user'] = mysql_endpoint.username("gdb")
     db_details['port'] = "3306"
+
+    # make use of third party library to change user privileges
+
+    connection = pymysql.connect(host=mysql_endpoint.db_host(),
+                                user=mysql_endpoint.username("gdb"),
+                                password=mysql_endpoint.password("gdb"),
+                                db=mysql_endpoint.database("gdb"),
+                                charset='utf8mb4',
+                                cursorclass=pymysql.cursors.DictCursor)
+
+    try:
+        with connection.cursor() as cursor:
+            sql = 'CREATE TABLE TESTERS (id int, string varchar(255);'
+            cursor.execute(sql)
+
+        connection.commit()
+
+    finally:
+        connection.close()
 
     # On own apache
     render('gdb-config.j2', '/var/www/generic-database/gdb-config.html', {
@@ -123,6 +148,7 @@ def render_mysql_config_and_share_details():
         'db_user': mysql_endpoint.username("gdb"),
         'db_port': "3306",
     })
+
     # share details to consumer-app
     gdb_endpoint = endpoint_from_flag('endpoint.generic-database.mysql.requested')
     
@@ -149,7 +175,7 @@ def restart_app():
     status_set('active', 'Apache/gdb ready and concrete')
 
 
-# A new relation is added to an already concrete generic database
+# A new relation is added to an already concrete generic database <-- not error prune, TODO to check
 if db_details['dbname']:
     request_flag = 'endpoint.generic-database.' + db_details['dbname'] + '.requested'
 
