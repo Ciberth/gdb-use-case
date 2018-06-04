@@ -4,7 +4,7 @@ import pwd
 import os
 import pymysql.cursors
 from subprocess import call
-from charmhelpers.core import host
+from charmhelpers.core import host, hookenv
 from charmhelpers.core.hookenv import log, status_set, config
 from charmhelpers.core.templating import render
 from charms.reactive import when, when_not, set_flag, clear_flag, when_file_changed, endpoint_from_flag
@@ -104,7 +104,7 @@ def request_mysql_db():
     databasename = db_request_endpoint.databasename()
 
     mysql_endpoint = endpoint_from_flag('mysqldb.connected')
-    mysql_endpoint.configure(databasename, 'gdb_mysql_user', prefix="gdb")
+    mysql_endpoint.configure(databasename, 'june1', prefix="gdb")
     # potential todo add support for username but since postgres interface does not allow this ...
     status_set('maintenance', 'Requesting mysql db')
 
@@ -122,7 +122,9 @@ def render_mysql_config_and_share_details():
     db_details['port'] = "3306"
 
     # make use of third party library to change user privileges
-
+    consumer_ip = hookenv.network_get('endpoint.generic-database.mysql.requested')
+    log(consumer_ip["ingress-addresses"][0], 'INFO')
+    
     connection = pymysql.connect(host=mysql_endpoint.db_host(),
                                 user=mysql_endpoint.username("gdb"),
                                 password=mysql_endpoint.password("gdb"),
@@ -132,8 +134,9 @@ def render_mysql_config_and_share_details():
 
     try:
         with connection.cursor() as cursor:
-            #sql = 'CREATE TABLE TESTERSSS (id int, string varchar(255));'
-            sql = 'GRANT ALL PRIVILEGES ON' + mysql_endpoint.database("gdb") + '.* to ;'
+            sql = 'GRANT ALL PRIVILEGES ON %s. * TO \'%s\'@\'%s\';' % (mysql_endpoint.database("gdb"), mysql_endpoint.username("gdb"), consumer_ip["ingress-addresses"][0])
+            log(sql, 'INFO')
+            #sql = 'GRANT ALL PRIVILEGES ON DBNAME. * TO 'user'@'localhost';'
             cursor.execute(sql)
 
         connection.commit()
