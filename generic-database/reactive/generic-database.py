@@ -100,43 +100,40 @@ def render_pgsql_config_and_share_details():
 
 @when('mysqldb.connected', 'endpoint.generic-database.mysql.requested')
 def request_mysql_db():
-    db_request_endpoint = endpoint_from_flag('endpoint.generic-database.mysql.requested')
-    databasename = db_request_endpoint.databasename()
-
-    mysql_endpoint = endpoint_from_flag('mysqldb.connected')
-    mysql_endpoint.configure(databasename, 'june1', prefix="gdb")
-    # potential todo add support for username but since postgres interface does not allow this ...
+    # no db is requested only user with admin privs is requested automatically
     status_set('maintenance', 'Requesting mysql db')
 
 
 @when('mysqldb.available', 'endpoint.generic-database.mysql.requested')
-def render_mysql_config_and_share_details():   
+def render_mysql_config_and_share_details():
+
+    requested_db = endpoint_from_flag('endpoint.generic-database.mysql.requested')
+    databasename = requested_db.databasename()
+   
     mysql_endpoint = endpoint_from_flag('mysqldb.available')
     
     # fill dictionary for later if other charms want to connect to the same database
+    # database() here is name of charm not requested databasename TODO
     db_details['technology'] = "mysql"
-    db_details['password'] = mysql_endpoint.password("gdb")
-    db_details['dbname'] = mysql_endpoint.database("gdb")
-    db_details['host'] = mysql_endpoint.db_host()
-    db_details['user'] = mysql_endpoint.username("gdb")
-    db_details['port'] = "3306"
+    db_details['password'] = mysql_endpoint.password()
+    db_details['dbname'] = mysql_endpoint.database()
+    db_details['host'] = mysql_endpoint.host()
+    db_details['user'] = mysql_endpoint.user()
+    db_details['port'] = mysql_endpoint.port()
 
-    # make use of third party library to change user privileges
-    consumer_ip = hookenv.network_get('endpoint.generic-database.mysql.requested')
-    log(consumer_ip["ingress-addresses"][0], 'INFO')
-    
-    connection = pymysql.connect(host=mysql_endpoint.db_host(),
-                                user=mysql_endpoint.username("gdb"),
-                                password=mysql_endpoint.password("gdb"),
-                                db=mysql_endpoint.database("gdb"),
+    # make use of third party library to create a database
+    # db=mysql_endpoint.database() not in connect function as database is not yet created --> will error
+    connection = pymysql.connect(host=mysql_endpoint.host(),
+                                user=mysql_endpoint.user(),
+                                password=mysql_endpoint.password(),
                                 charset='utf8mb4',
                                 cursorclass=pymysql.cursors.DictCursor)
-
+    # omdat deze hook twee keer runt?
+    # nen query show databases?
     try:
         with connection.cursor() as cursor:
-            sql = 'GRANT ALL PRIVILEGES ON %s. * TO \'%s\'@\'%s\';' % (mysql_endpoint.database("gdb"), mysql_endpoint.username("gdb"), consumer_ip["ingress-addresses"][0])
-            log(sql, 'INFO')
-            #sql = 'GRANT ALL PRIVILEGES ON DBNAME. * TO 'user'@'localhost';'
+            sql = 'CREATE DATABASE ' + databasename + ';'
+            
             cursor.execute(sql)
 
         connection.commit()
@@ -147,11 +144,11 @@ def render_mysql_config_and_share_details():
     # On own apache
     render('gdb-config.j2', '/var/www/generic-database/gdb-config.html', {
         'db_master': "no-master",
-        'db_pass': mysql_endpoint.password("gdb"),
-        'db_dbname': mysql_endpoint.database("gdb"),
-        'db_host': mysql_endpoint.db_host(),
-        'db_user': mysql_endpoint.username("gdb"),
-        'db_port': "3306",
+        'db_pass': mysql_endpoint.password(),
+        'db_dbname': mysql_endpoint.database(),
+        'db_host': mysql_endpoint.host(),
+        'db_user': mysql_endpoint.user(),
+        'db_port': mysql_endpoint.port(),
     })
 
     # share details to consumer-app
@@ -159,11 +156,11 @@ def render_mysql_config_and_share_details():
     
     gdb_endpoint.share_details(
         "mysql",
-        mysql_endpoint.db_host(),
-        mysql_endpoint.database("gdb"),
-        mysql_endpoint.username("gdb"),
-        mysql_endpoint.password("gdb"),
-        "3306",
+        mysql_endpoint.host(),
+        mysql_endpoint.database(),
+        mysql_endpoint.user(),
+        mysql_endpoint.password(),
+        mysql_endpoint.port(),
     )
     
     clear_flag('endpoint.generic-database.mysql.requested')

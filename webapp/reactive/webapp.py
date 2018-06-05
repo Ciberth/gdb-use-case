@@ -27,6 +27,13 @@ def waiting_for_db():
     host.service_reload('apache2')
     status_set('maintenance', 'Waiting for at least 1 generic database relation')
 
+@when_not('endpoint.postgresqlgdb.connected')
+def waiting_for_db():
+    status_set('maintenance', 'Waiting for gdb (postgres) relation')
+
+@when_not('endpoint.mysqlgdb.connected')
+def waiting_for_db():
+    status_set('maintenance', 'Waiting for gdb (mysql) relation')
 
 ########################################################################
 #                                                                      #
@@ -39,14 +46,14 @@ def waiting_for_db():
 @when_not('endpoint.postgresqlgdb.connected')
 def request_postgresql_db():
     endpoint = endpoint_from_flag('endpoint.postgresqlgdb.joined')
-    endpoint.request('postgresql', 'items')
+    endpoint.request('postgresql', 'dbitems')
     status_set('maintenance', 'Requesting postgresql gdb')
 
 @when('endpoint.mysqlgdb.joined')
 @when_not('endpoint.mysqlgdb.connected')
 def request_mysql_db():
     endpoint = endpoint_from_flag('endpoint.mysqlgdb.joined')
-    endpoint.request('mysql', 'users')
+    endpoint.request('mysql', 'dbusers')
     status_set('maintenance', 'Requesting mysql gdb')
 
 
@@ -62,7 +69,7 @@ def pgsql_render_config():
     
     pgsql = endpoint_from_flag('endpoint.postgresqlgdb.available')
 
-    render('pgsql-config.j2', '/var/www/webapp/postgresql-config.html', {
+    render('db-config.j2', '/var/www/webapp/postgresql-config.html', {
         'gdb_host' : pgsql.host(),
         'gdb_port' : pgsql.port(),
         'gdb_dbname' : pgsql.databasename(),
@@ -78,7 +85,7 @@ def mysql_render_config():
     
     mysql = endpoint_from_flag('endpoint.mysqlgdb.available')
 
-    render('pgsql-config.j2', '/var/www/webapp/mysql-config.html', {
+    render('db-config.j2', '/var/www/webapp/mysql-config.html', {
         'gdb_host' : mysql.host(),
         'gdb_port' : mysql.port(),
         'gdb_dbname' : mysql.databasename(),

@@ -15,4 +15,4 @@ requires:
   pgsqldb:
     interface: pgsql
   mysqldb:
-    interface: mysql-shared
+    interface: mysql-root

@@ -25,7 +25,7 @@ def finishing_up_setting_up_sites():
 @when_not('endpoint.mysqlgdb.connected')
 def waiting_for_db():
     host.service_reload('apache2')
-    status_set('maintenance', 'Waiting for at least 1 generic database relation')
+    status_set('maintenance', 'Waiting for a gdb (mysql) relation')
 
 
 ########################################################################
@@ -39,7 +39,7 @@ def waiting_for_db():
 @when_not('endpoint.mysqlgdb.connected')
 def connect_mysql_db():
     endpoint = endpoint_from_flag('endpoint.mysqlgdb.joined')
-    endpoint.connect('gdb_mysql')
+    endpoint.connect('dbusers')
     status_set('maintenance', 'Connect mysql gdb')
 
 
@@ -55,7 +55,7 @@ def mysql_render_config():
     
     mysql = endpoint_from_flag('endpoint.mysqlgdb.available')
 
-    render('pgsql-config.j2', '/var/www/data-app/mysql-config.html', {
+    render('db-config.j2', '/var/www/data-app/mysql-config.html', {
         'gdb_host' : mysql.host(),
         'gdb_port' : mysql.port(),
         'gdb_dbname' : mysql.databasename(),
