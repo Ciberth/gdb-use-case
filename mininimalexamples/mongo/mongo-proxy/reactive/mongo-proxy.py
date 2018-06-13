@@ -21,52 +21,14 @@ def ready():
     host.service_reload('apache2')
     status_set('active', 'apache ready - gdb not concrete')
 
-# Mysql requests (2 phases)
+# Mongo request <-- only host port for now as mongo creates when needed
 
-## 1. Request a db through mysql-shared interface
-## 2. Requast a root user through mysql-root interface
+@when('mongodb.connected')
+def request_mongodb():
+    mongodb_ep = endpoint_from_flag('mongodb.connected')
+    mongodb_connection = mongodb_ep.connection_string()
 
-### 1.
-
-@when('mysql-shared.connected')
-def request_mysql_db():
-    mysql_endpoint = endpoint_from_flag('mysql-shared.connected')
-    mysql_endpoint.configure('proxy_mysql_db', 'proxy_mysql_user', prefix="proxy")
-    status_set('maintenance', 'Requesting mysql db')
-
-
-@when('mysql-shared.available')
-def render_mysql_config():   
-    mysql_endpoint = endpoint_from_flag('mysql-shared.available')
-    
-    render('mysql-config.j2', '/var/www/mysql-proxy/mysql-config.html', {
-        'db_pass': mysql_endpoint.password("proxy"),
-        'db_dbname': mysql_endpoint.database("proxy"),
-        'db_host': mysql_endpoint.db_host(),
-        'hostname': mysql_endpoint.hostname("proxy"),
-        'db_user': mysql_endpoint.username("proxy"), # note no port :/
+    render('mongo-config.j2', '/var/www/mongo-proxy/mongo-config.html', {
+        'db_host': mongodb_connection.split(':')[0],
+        'db_port': mongodb_connection.split(':')[1],
     })
-    
-
-    host.service_reload('apache2')
-    set_state('webapp.mysql.configured')
-    status_set('active', 'Apache/Proxy ready!')
-
-### 2. 
-
-@when('mysql-root.connected')
-def request_mysql_root_user():
-    status_set('maintenance', 'Requesting mysql root user')
-
-@when('mysql-root.available')
-def render_mysql_root_config():
-    mysqlroot_endpoint = endpoint_from_flag('mysql-root.available')
-
-        render('mysql-config.j2', '/var/www/generic-database/mysql-root-config.html', {
-        'db_pass': mysql_endpoint.password(),
-        'db_dbname': mysql_endpoint.database(),
-        'db_host': mysql_endpoint.host(),
-        'db_user': mysql_endpoint.user(),
-        'db_port': mysql_endpoint.port(),
-    })
-    

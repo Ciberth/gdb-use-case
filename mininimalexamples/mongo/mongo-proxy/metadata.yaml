@@ -1,5 +1,5 @@
-name: Mysql-proxy
-summary: Mysql-proxy + apache + adminer.php 
+name: Mongo-proxy
+summary: Mongo-proxy + apache + adminer.php 
 maintainer: Ciberth
 description: |
   Todo 
@@ -10,4 +10,5 @@ provides:
   website:
     interface: http
 requires:
-  mongo
+  mongodb:
+    interface: mongodb
