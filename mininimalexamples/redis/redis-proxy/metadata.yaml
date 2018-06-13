@@ -1,0 +1,14 @@
+name: Redis-proxy
+summary: Redis-proxy + apache + adminer.php 
+maintainer: Ciberth
+description: |
+  Todo 
+tags:
+  - ops
+subordinate: false
+provides:
+  website:
+    interface: http
+requires:
+  redis:
+    interface: redis

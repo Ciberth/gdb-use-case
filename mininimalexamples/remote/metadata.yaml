@@ -1,0 +1,11 @@
+name: Remote
+summary: Remote charm deploying adminer.php on apache-php layer
+maintainer: Ciberth
+description: |
+  Todo 
+tags:
+  - ops
+subordinate: false
+provides:
+  website:
+    interface: http
