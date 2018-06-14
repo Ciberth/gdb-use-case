@@ -12,9 +12,12 @@ See the following image of what we want to achieve.
 4. This is the actual charm from the charm store for a database technology.
 
 
-## The following examples work:
+## The following examples (more or less) work:
 
 - Postgresql via pgbouncer
+- Mongo (only host + port) but adminer can correctly connect from remote
+- Mysql shared part ok, mysql-root part NOT
+- Redis NOT
 
 
 
@@ -26,3 +29,21 @@ See the following image of what we want to achieve.
 if not data_changed('connection', connection):
     return
 ```
+
+## Issues:
+
+### Redis
+
+Fails at
+
+```
+redis_db = redis_ep.redis_data()[0]
+KeyError: 0
+```
+
+### Mariadb/mysql
+
+Weird stuff
+mysql-shared part is ok
+mysql-root configured flag gets set in joined hook but file does not get rendered :/
+
