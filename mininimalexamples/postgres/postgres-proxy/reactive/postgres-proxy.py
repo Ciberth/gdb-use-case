@@ -46,5 +46,5 @@ def render_pgsql_config():
     })
 
     host.service_reload('apache2')
-    set_state('webapp.pgsql.configured')
+    set_flag('webapp.pgsql.configured')
     status_set('active', 'Apache/Proxy ready!')

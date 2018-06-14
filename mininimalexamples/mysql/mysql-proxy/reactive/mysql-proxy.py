@@ -29,6 +29,7 @@ def ready():
 ### 1.
 
 @when('mysql-shared.connected')
+@when_not('webapp.mysql.configured')
 def request_mysql_db():
     mysql_endpoint = endpoint_from_flag('mysql-shared.connected')
     mysql_endpoint.configure('proxy_mysql_db', 'proxy_mysql_user', prefix="proxy")
@@ -50,12 +51,13 @@ def render_mysql_config():
     
 
     host.service_reload('apache2')
-    set_state('webapp.mysql.configured')
+    set_flag('webapp.mysql.configured')
     status_set('active', 'mysql done!')
 
 ### 2. 
 
 @when('mysql-root.connected')
+@when_not('webapp.mysqlroot.configured')
 def request_mysql_root_user():
     status_set('maintenance', 'Requesting mysql root user')
 
@@ -64,15 +66,15 @@ def request_mysql_root_user():
 def render_mysql_root_config():
     mysqlroot_endpoint = endpoint_from_flag('mysql-root.available')
 
-        render('mysql-config.j2', '/var/www/generic-database/mysql-root-config.html', {
-        'db_pass': mysql_endpoint.password(),
-        'db_dbname': mysql_endpoint.database(),
-        'db_host': mysql_endpoint.host(),
-        'db_user': mysql_endpoint.user(),
-        'db_port': mysql_endpoint.port(),
+    render('mysql-config.j2', '/var/www/generic-database/mysql-root-config.html', {
+        'db_pass': mysqlroot_endpoint.password(),
+        'db_dbname': mysqlroot_endpoint.database(),
+        'db_host': mysqlroot_endpoint.host(),
+        'db_user': mysqlroot_endpoint.user(),
+        'db_port': mysqlroot_endpoint.port(),
     })
 
     host.service_reload('apache2')
-    set_state('webapp.mysqlroot.configured')
+    set_flag('webapp.mysqlroot.configured')
     status_set('active', 'mysql-root done!')
     

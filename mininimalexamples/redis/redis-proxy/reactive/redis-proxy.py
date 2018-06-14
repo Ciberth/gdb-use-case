@@ -41,5 +41,5 @@ def write_redis_configs():
     })
 
     host.service_reload('apache2')
-    set_state('webapp.redis.configured')
+    set_flag('webapp.redis.configured')
     status_set('active', 'Apache/Proxy ready!')

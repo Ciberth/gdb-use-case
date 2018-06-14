@@ -12,6 +12,5 @@ provides:
 requires:
   mysql-shared:
     interface: mysql-shared
-requires:
   mysql-root:
     interface: mysql-root
