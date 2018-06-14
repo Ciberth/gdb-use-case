@@ -24,6 +24,7 @@ def ready():
 # Postgres requests 
 
 @when('pgsql.connected')
+@when_not('webapp.pgsql.configured')
 def request_postgresql_db():
     pgsql_endpoint = endpoint_from_flag('pgsql.connected')
     pgsql_endpoint.set_database("postgresproxydb")
@@ -31,6 +32,7 @@ def request_postgresql_db():
 
 
 @when('pgsql.master.available')
+@when_not('webapp.pgsql.configured')
 def render_pgsql_config():   
     pgsql_endpoint = endpoint_from_flag('pgsql.master.available')
     

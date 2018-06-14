@@ -12,6 +12,17 @@ See the following image of what we want to achieve.
 4. This is the actual charm from the charm store for a database technology.
 
 
-The following examples work:
+## The following examples work:
 
 - Postgresql via pgbouncer
+
+
+
+## Notes:
+
+- In all examples we use flags to render the the config file only once. If the connection details change afterwards it wont be re-rendered. A way to solve this (instead of the flags) is:
+
+```python
+if not data_changed('connection', connection):
+    return
+```

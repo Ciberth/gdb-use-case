@@ -36,6 +36,7 @@ def request_mysql_db():
 
 
 @when('mysql-shared.available')
+@when_not('webapp.mysql.configured')
 def render_mysql_config():   
     mysql_endpoint = endpoint_from_flag('mysql-shared.available')
     
@@ -50,7 +51,7 @@ def render_mysql_config():
 
     host.service_reload('apache2')
     set_state('webapp.mysql.configured')
-    status_set('active', 'Apache/Proxy ready!')
+    status_set('active', 'mysql done!')
 
 ### 2. 
 
@@ -59,6 +60,7 @@ def request_mysql_root_user():
     status_set('maintenance', 'Requesting mysql root user')
 
 @when('mysql-root.available')
+@when_not('webapp.mysqlroot.configured')
 def render_mysql_root_config():
     mysqlroot_endpoint = endpoint_from_flag('mysql-root.available')
 
@@ -69,4 +71,8 @@ def render_mysql_root_config():
         'db_user': mysql_endpoint.user(),
         'db_port': mysql_endpoint.port(),
     })
+
+    host.service_reload('apache2')
+    set_state('webapp.mysqlroot.configured')
+    status_set('active', 'mysql-root done!')
     

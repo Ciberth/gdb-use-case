@@ -19,11 +19,12 @@ def finishing_up_setting_up_sites():
 @when('apache.start')
 def ready():
     host.service_reload('apache2')
-    status_set('active', 'apache ready - gdb not concrete')
+    status_set('active', 'apache ready - no mongo')
 
 # Mongo request <-- only host port for now as mongo creates when needed
 
 @when('mongodb.connected')
+@when_not('mongodb.configured')
 def request_mongodb():
     mongodb_ep = endpoint_from_flag('mongodb.connected')
     mongodb_connection = mongodb_ep.connection_string()
@@ -32,3 +33,11 @@ def request_mongodb():
         'db_host': mongodb_connection.split(':')[0],
         'db_port': mongodb_connection.split(':')[1],
     })
+
+    # Note that thanks to this flag this render function will only be called once. If the mongo URI changes it wont get re-rendered. You could solve this by not using the 'mongodb.configured' flag and use data_changed to check every new running hook if the data is changed. This can be done like this:
+
+    #if not data_changed('mongodb_connection', mongodb_connection):
+    #    return
+
+    set_flag('mongodb.configured')
+    status_set('active', 'apache/proxy ready!')
