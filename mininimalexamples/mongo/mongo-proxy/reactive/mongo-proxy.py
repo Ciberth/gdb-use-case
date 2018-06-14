@@ -19,7 +19,7 @@ def finishing_up_setting_up_sites():
 @when('apache.start')
 def ready():
     host.service_reload('apache2')
-    status_set('active', 'apache ready - no mongo')
+    status_set('active', 'apache ready')
 
 # Mongo request <-- only host port for now as mongo creates when needed
 
