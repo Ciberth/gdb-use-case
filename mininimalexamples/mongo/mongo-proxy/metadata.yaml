@@ -1,4 +1,4 @@
-name: Mongo-proxy
+name: mongo-proxy
 summary: Mongo-proxy + apache + adminer.php 
 maintainer: Ciberth
 description: |

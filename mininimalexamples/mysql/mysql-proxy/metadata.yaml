@@ -1,4 +1,4 @@
-name: Mysql-proxy
+name: mysql-proxy
 summary: Mysql-proxy + apache + adminer.php 
 maintainer: Ciberth
 description: |

@@ -1,4 +1,4 @@
-name: Redis-proxy
+name: redis-proxy
 summary: Redis-proxy + apache + adminer.php 
 maintainer: Ciberth
 description: |

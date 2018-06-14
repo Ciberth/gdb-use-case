@@ -1,4 +1,4 @@
-name: Remote
+name: remote
 summary: Remote charm deploying adminer.php on apache-php layer
 maintainer: Ciberth
 description: |

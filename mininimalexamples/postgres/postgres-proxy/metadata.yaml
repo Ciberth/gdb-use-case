@@ -1,4 +1,4 @@
-name: Postgres-proxy
+name: postgres-proxy
 summary: Postgres-proxy + apache + adminer.php 
 maintainer: Ciberth
 description: |
