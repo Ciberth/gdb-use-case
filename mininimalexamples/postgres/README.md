@@ -7,7 +7,7 @@ juju deploy ../juju_repository/trusty/postgres-proxy
 juju deploy postgresql
 juju deploy pgbouncer
 juju add-relation pgbouncer postgresql
-juju add-relation postgresql postgres-proxy
+juju add-relation pgbouncer:db postgres-proxy
 
 ```
 
