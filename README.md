@@ -25,8 +25,9 @@ The data-app and webapp layers are nothing more than small proof of concepts and
 3. ``charm build webapp``
 4. ``charm build generic-database``
 5. Copy the generic-database interface layer to $JUJU_REPOSITORY/interfaces
-6. ```
+6. 
 
+```
 juju deploy mysql
 juju deploy postgresql
 juju deploy pgbouncer
