@@ -29,15 +29,19 @@ def write_redis_configs():
     status_set('maintenance', 'Rendering redis details')
 
     redis_ep = endpoint_from_flag('redis.available')
-    redis_db = redis_ep.redis_data()[0]
+    redis_db = redis_ep.redis_data()
 
     # Available: redis_db['host'], redis_db['uri'], redis_db['port'], redis_db['password']
+    if 'password' in redis_db:
+        password = redis_db['password']
+    else:
+        password = 'No password set'
 
     render('redis-config.j2', '/var/www/redis-proxy/redis-config.html', {
         'host': redis_db['host'],
         'uri': redis_db['uri'],
         'port': redis_db['port'],
-        'password': redis_db['password'],
+        'password': password,
     })
 
     host.service_reload('apache2')

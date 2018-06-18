@@ -11,3 +11,4 @@ juju add-relation redis redis-proxy
 
 ## Remarks
 
+Host and uri return None when using interface, port returns 6397. Not working properly!
