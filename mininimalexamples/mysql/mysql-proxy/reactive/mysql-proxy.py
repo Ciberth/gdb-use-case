@@ -17,9 +17,10 @@ def finishing_up_setting_up_sites():
     set_flag('apache.start')
 
 @when('apache.start')
+@when_not('webapp.mysql.configured')
 def ready():
     host.service_reload('apache2')
-    status_set('active', 'apache ready - gdb not concrete')
+    status_set('active', 'apache ready/waiting relation')
 
 # Mysql requests (2 phases)
 
@@ -29,10 +30,11 @@ def ready():
 ### 1.
 
 @when('mysql-shared.connected')
-@when_not('webapp.mysql.configured')
+@when_not('webapp.mysqlshared.configured')
 def request_mysql_db():
+    log('--- IN REQUEST SHARED')
     mysql_endpoint = endpoint_from_flag('mysql-shared.connected')
-    mysql_endpoint.configure('proxy_mysql_db', 'proxy_mysql_user', prefix="proxy")
+    mysql_endpoint.configure('proxy_mysql_db2', 'proxy_mysql_user2', prefix="proxy")
     status_set('maintenance', 'Requesting mysql db')
 
 
@@ -48,10 +50,10 @@ def render_mysql_config():
         'hostname': mysql_endpoint.hostname("proxy"),
         'db_user': mysql_endpoint.username("proxy"), # note no port :/
     })
-    
+    log('--- NA RENDER SHARED')
 
     host.service_reload('apache2')
-    set_flag('webapp.mysql.configured')
+    set_flag('webapp.mysqlshared.configured')
     status_set('active', 'mysql done!')
 
 ### 2. 
@@ -66,7 +68,7 @@ def request_mysql_root_user():
 def render_mysql_root_config():
     mysqlroot_endpoint = endpoint_from_flag('mysql-root.available')
 
-    render('mysql-config.j2', '/var/www/generic-database/mysql-root-config.html', {
+    render('mysql-config.j2', '/var/www/mysql-proxy/mysql-root-config.html', {
         'db_pass': mysqlroot_endpoint.password(),
         'db_dbname': mysqlroot_endpoint.database(),
         'db_host': mysqlroot_endpoint.host(),
@@ -74,7 +76,14 @@ def render_mysql_root_config():
         'db_port': mysqlroot_endpoint.port(),
     })
 
+    log('--- NA RENDER ROOT')
     host.service_reload('apache2')
     set_flag('webapp.mysqlroot.configured')
     status_set('active', 'mysql-root done!')
     
+
+@when('webapp.mysqlshared.configured', 'webapp.mysqlroot.configured')
+def set_flag_mysql_is_done():
+    host.service_reload('apache2')
+    log('--- BEIDE FLAGS AND SET 1 FLAG')
+    set_flag('webapp.mysql.configured')
