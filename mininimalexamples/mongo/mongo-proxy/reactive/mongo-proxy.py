@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import pymongo
 import pwd
 import os
 from subprocess import call
@@ -38,6 +39,25 @@ def request_mongodb():
 
     #if not data_changed('mongodb_connection', mongodb_connection):
     #    return
+
+    # PoC test to populate the collection with pymongo
+
+    mongo_host = mongodb_connection.split(':')[0]
+    mongo_port = mongodb_connection.split(':')[1]
+
+    data = {}
+    data['username'] = 'username'
+    data['admin'] = 'yes'
+    data['text'] = 'This is a test'
+
+
+    try:
+        client = pymongo.MongoClient(mongo_host, int(mongo_port))
+        db = client['mongodatabase']
+        collection = db.example_collection
+        collection.insert(data)
+    except pymongo.errors.ConnectionFailure:
+        log('--PYMONGO ERROR--')
 
     set_flag('mongodb.configured')
     status_set('active', 'apache/proxy ready!')
