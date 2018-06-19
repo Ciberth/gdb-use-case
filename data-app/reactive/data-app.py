@@ -40,7 +40,7 @@ def waiting_for_db():
 @when_not('mysqldb.configured')
 def connect_mysql_db():
     endpoint = endpoint_from_flag('endpoint.mysqlgdb.joined')
-    endpoint.request('dbusers99')
+    endpoint.request('mysql', 'dbusers99')
     status_set('maintenance', 'Connect mysql gdb')
 
 

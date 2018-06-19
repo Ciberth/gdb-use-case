@@ -127,11 +127,11 @@ def mongo_render_config():
 def restart_app():
     host.service_reload('apache2')
     clear_flag('restart-app')
-    status_set('active', 'App ready')
+    status_set('active', 'Apache restarted')
 
 @when('postgresdb.configured','mysqldb.configured','mongodb.configured')
 def all_flags_set():
-    status_set('active', 'Webapp configured!)
+    status_set('active', 'Webapp configured!')
     set_flag('webapp.configured')
     
 

@@ -1,0 +1,69 @@
+﻿series: xenial
+applications:
+  db-users:
+    charm: 'local:xenial/generic-database-3'
+    num_units: 1
+    annotations:
+      gui-x: '760.9500122070312'
+      gui-y: '187.79278564453125'
+    to:
+      - '0'
+  mongodb:
+    charm: 'cs:mongodb-48'
+    num_units: 1
+    annotations:
+      gui-x: '1226.3284301757812'
+      gui-y: '-88.1940360254942'
+    to:
+      - '4'
+  mysql:
+    charm: 'cs:mysql-58'
+    num_units: 1
+    annotations:
+      gui-x: '1239.1549682617188'
+      gui-y: '154.6449532323183'
+    to:
+      - '1'
+  pgbouncer:
+    charm: 'cs:pgbouncer-2'
+    num_units: 1
+    annotations:
+      gui-x: '1240.7112426757812'
+      gui-y: '396.63433837890625'
+    to:
+      - '3'
+  postgresql:
+    charm: 'cs:postgresql-175'
+    num_units: 1
+    annotations:
+      gui-x: '1564.5595092773438'
+      gui-y: '405.4983267969785'
+    to:
+      - '2'
+relations:
+  - - 'pgbouncer:backend-db-admin'
+    - 'postgresql:db-admin'
+  - - 'db-users:mysql-shared'
+    - 'mysql:shared-db'
+  - - 'db-users:mysql-root'
+    - 'mysql:db-admin'
+  - - 'db-users:mongodb'
+    - 'mongodb:database'
+  - - 'db-users:pgsqldb'
+    - 'pgbouncer:db-admin'
+machines:
+  '0':
+    series: xenial
+    constraints: arch=amd64 root-disk=8192
+  '1':
+    series: xenial
+    constraints: arch=amd64 root-disk=8192
+  '2':
+    series: xenial
+    constraints: arch=amd64 root-disk=8192
+  '3':
+    series: xenial
+    constraints: arch=amd64 root-disk=8192
+  '4':
+    series: xenial
+    constraints: arch=amd64 root-disk=8192

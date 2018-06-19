@@ -1,0 +1,88 @@
+﻿series: xenial
+applications:
+  db-items:
+    charm: 'local:xenial/generic-database-5'
+    num_units: 1
+    annotations:
+      gui-x: '715.1209716796875'
+      gui-y: '348.83782958984375'
+    to:
+      - '7'
+  db-users:
+    charm: 'local:xenial/generic-database-4'
+    num_units: 1
+    annotations:
+      gui-x: '697.6756591796875'
+      gui-y: '-36.43780517578125'
+    to:
+      - '6'
+  mongodb:
+    charm: 'cs:mongodb-48'
+    num_units: 1
+    annotations:
+      gui-x: '1226.3284301757812'
+      gui-y: '-88.1940360254942'
+    to:
+      - '3'
+  mysql:
+    charm: 'cs:mysql-58'
+    num_units: 1
+    annotations:
+      gui-x: '1239.1549682617188'
+      gui-y: '154.6449532323183'
+    to:
+      - '0'
+  pgbouncer:
+    charm: 'cs:pgbouncer-2'
+    num_units: 1
+    annotations:
+      gui-x: '1240.7112426757812'
+      gui-y: '396.63433837890625'
+    to:
+      - '2'
+  postgresql:
+    charm: 'cs:postgresql-175'
+    num_units: 1
+    annotations:
+      gui-x: '1564.5595092773438'
+      gui-y: '405.4983267969785'
+    to:
+      - '1'
+relations:
+  - - 'pgbouncer:backend-db-admin'
+    - 'postgresql:db-admin'
+  - - 'db-items:mongodb'
+    - 'mongodb:database'
+  - - 'db-items:pgsqldb'
+    - 'pgbouncer:db-admin'
+  - - 'db-items:mysql-shared'
+    - 'mysql:shared-db'
+  - - 'db-items:mysql-root'
+    - 'mysql:db-admin'
+  - - 'db-users:mysql-root'
+    - 'mysql:db-admin'
+  - - 'db-users:mysql-shared'
+    - 'mysql:shared-db'
+  - - 'db-users:pgsqldb'
+    - 'pgbouncer:db-admin'
+  - - 'db-users:mongodb'
+    - 'mongodb:database'
+machines:
+  '0':
+    series: xenial
+    constraints: arch=amd64 root-disk=8192
+  '1':
+    series: xenial
+    constraints: arch=amd64 root-disk=8192
+  '2':
+    series: xenial
+    constraints: arch=amd64 root-disk=8192
+  '3':
+    series: xenial
+    constraints: arch=amd64 root-disk=8192
+  '6':
+    series: xenial
+    constraints: arch=amd64 root-disk=8192
+  '7':
+    series: xenial
+    constraints: arch=amd64 root-disk=8192

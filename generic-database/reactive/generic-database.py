@@ -11,10 +11,15 @@ from charms.reactive import Endpoint
 
 
 # Once this generic database becomes concrete the following dictionary will keep all information
+# Config-changed hook sometimes fails if keys do not exist (?)
 
 db_details = {}
 db_details['technology'] = "placeholder"
 db_details['dbname'] = "placeholder"
+db_details['user'] = "placeholder"
+db_details['host'] = "placeholder"
+db_details['password'] = "placeholder"
+db_details['port'] = "placeholder"
 
 ################################################
 #                                              #
@@ -67,7 +72,6 @@ def request_postgresql_db():
         pgsql_endpoint = endpoint_from_flag('pgsqldb.connected')
         pgsql_endpoint.set_database(databasename)
         status_set('maintenance', 'Requesting pgsql db')
-        clear_flag('endpoint.generic-database.postgresql.requested')
 
 
 @when('pgsqldb.master.available', 'endpoint.generic-database.postgresql.requested')
@@ -141,9 +145,9 @@ def render_mysql_config():
     
     # fill dictionary (only dbname, location, port)
     db_details['technology'] = "mysql"
-    db_details['dbname'] = mysql_endpoint['dbname']
-    db_details['host'] = mysql_endpoint['host']
-    db_details['port'] = mysql_endpoint['port']
+    db_details['dbname'] = mysql_endpoint.database("proxy")
+    db_details['host'] = mysql_endpoint.db_host()
+    db_details['port'] = "3306" # note no port :/
     db_details['concrete'] = True
 
     # On own apache
@@ -152,7 +156,7 @@ def render_mysql_config():
         'db_dbname': mysql_endpoint.database("proxy"),
         'db_host': mysql_endpoint.db_host(),
         'hostname': mysql_endpoint.hostname("proxy"),
-        'db_user': mysql_endpoint.username("proxy"), # note no port :/
+        'db_user': mysql_endpoint.username("proxy"),
     })
 
 
@@ -175,8 +179,8 @@ def render_mysql_root_config():
 
     # fill dictionary (user and password)
     db_details['technology'] = "mysql"
-    db_details['password'] = mysql_endpoint['password']
-    db_details['user'] = mysql_endpoint['user']
+    db_details['password'] = mysqlroot_endpoint.password()
+    db_details['user'] = mysqlroot_endpoint.user()
     db_details['concrete'] = True
 
     # On own apache
@@ -276,7 +280,7 @@ def connect_to_concrete_mongodb():
     )
 
     clear_flag('endpoint.generic-database.mongodb.requested')
-    status_set('active', 'Shared mongodb details!)
+    status_set('active', 'Shared mongodb details!')
 
 
 @when('restart-app')
