@@ -63,7 +63,7 @@ def request_mysql_db():
 @when('endpoint.mongogdb.joined')
 @when_not('mongodb.configured')
 def request_mongo_db():
-    endpoint = endpoint_from_flag('endpoint.mysqlgdb.joined')
+    endpoint = endpoint_from_flag('endpoint.mongogdb.joined')
     endpoint.request('mongodb', 'dbmongo99')
     status_set('maintenance', 'Requesting mongo gdb')
 

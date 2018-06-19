@@ -245,11 +245,11 @@ def request_mongodb():
 
     # On own apache
     render('gdb-config.j2', '/var/www/generic-database/mysql-root-config.html', {
-        'db_pass': mysqlroot_endpoint.password(),
-        'db_dbname': mysqlroot_endpoint.database(),
-        'db_host': mysqlroot_endpoint.host(),
-        'db_user': mysqlroot_endpoint.user(),
-        'db_port': mysqlroot_endpoint.port(),
+        'db_pass': db_details['password'],
+        'db_dbname': db_details['dbname'],
+        'db_host': db_details['host'],
+        'db_user': db_details['user'],
+        'db_port': db_details['port'],
     })
 
     
