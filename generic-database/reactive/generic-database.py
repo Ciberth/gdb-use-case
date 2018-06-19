@@ -71,6 +71,7 @@ def request_postgresql_db():
 
 
 @when('pgsqldb.master.available', 'endpoint.generic-database.postgresql.requested')
+@when_not('endpoint.generic-database.concrete')
 def render_pgsql_config_and_share_details():   
     pgsql_endpoint = endpoint_from_flag('pgsqldb.master.available')
     
@@ -146,7 +147,7 @@ def render_mysql_config():
     db_details['concrete'] = True
 
     # On own apache
-    render('mysql-config.j2', '/var/www/generic-database/mysql-shared-config.html', {
+    render('gdb-config.j2', '/var/www/generic-database/mysql-shared-config.html', {
         'db_pass': mysql_endpoint.password("proxy"),
         'db_dbname': mysql_endpoint.database("proxy"),
         'db_host': mysql_endpoint.db_host(),
@@ -179,7 +180,7 @@ def render_mysql_root_config():
     db_details['concrete'] = True
 
     # On own apache
-    render('mysql-config.j2', '/var/www/mysql-proxy/mysql-root-config.html', {
+    render('gdb-config.j2', '/var/www/generic-database/mysql-root-config.html', {
         'db_pass': mysqlroot_endpoint.password(),
         'db_dbname': mysqlroot_endpoint.database(),
         'db_host': mysqlroot_endpoint.host(),
@@ -211,7 +212,71 @@ def share_details():
     set_flag('endpoint.generic-database.concrete')
     set_flag('restart-app')
 
+#######################
+#
+# MongoDB
+#
+#######################
 
+@when('mongodb.connected', 'endpoint.generic-database.mongodb.requested')
+@when_not('endpoint.generic-database.mongodb.available', 'endpoint.generic-database.concrete')
+def request_mongodb():
+    mongodb_ep = endpoint_from_flag('mongodb.connected')
+    mongodb_connection = mongodb_ep.connection_string()
+
+    mongo_host = mongodb_connection.split(':')[0]
+    mongo_port = mongodb_connection.split(':')[1]
+
+    gdb_endpoint = endpoint_from_flag('endpoint.generic-database.mongodb.requested')
+
+    # fill dictionary (user and password)
+    db_details['technology'] = "mongodb"
+    db_details['password'] = "not supported on mongodb interface"
+    db_details['dbname'] = gdb_endpoint.databasename()
+    db_details['host'] = mongo_host
+    db_details['user'] = "not supported on mongodb interface"
+    db_details['port'] = mongo_port
+    db_details['concrete'] = True
+
+
+    # On own apache
+    render('gdb-config.j2', '/var/www/generic-database/mysql-root-config.html', {
+        'db_pass': mysqlroot_endpoint.password(),
+        'db_dbname': mysqlroot_endpoint.database(),
+        'db_host': mysqlroot_endpoint.host(),
+        'db_user': mysqlroot_endpoint.user(),
+        'db_port': mysqlroot_endpoint.port(),
+    })
+
+    
+    gdb_endpoint.share_details(
+        "mongodb",
+        mongo_host,
+        gdb_endpoint.databasename(),
+        "not supported on mongodb interface",
+        "not supported on mongodb interface",
+        mongo_port,
+    )
+    
+    clear_flag('endpoint.generic-database.mongodb.requested')
+    set_flag('endpoint.generic-database.mongodb.available')
+    set_flag('endpoint.generic-database.concrete')
+    set_flag('restart-app')
+
+@when('mongodb.connected', 'endpoint.generic-database.mongodb.requested', 'endpoint.generic-database.concrete')
+def connect_to_concrete_mongodb():
+    gdb_endpoint = endpoint_from_flag('endpoint.generic-database.mongodb.requested')
+    gdb_endpoint.share_details(
+        db_details['technology'],
+        db_details['host'],
+        db_details['dbname'],
+        db_details['user'],
+        db_details['password'],
+        db_details['port'],
+    )
+
+    clear_flag('endpoint.generic-database.mongodb.requested')
+    status_set('active', 'Shared mongodb details!)
 
 
 @when('restart-app')
