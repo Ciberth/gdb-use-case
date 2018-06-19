@@ -48,4 +48,21 @@ juju add-relation webapp db2
 juju add-relation data-app db1
 
 ```
+## Optimisations
 
+### More database technologies
+
+- Neo4J
+- Cassandra
+- ...
+
+### Libjuju
+
+Remove the prequirements of having existing services and relations but make it so that the generic database service is able to set up and manage the services themselves with the libjuju-library.
+
+
+### Others
+
+- Depending on the use case a new generic database administrator service might be appropriate or support for specific actions could be added. Things like **running a SQL-query, creating users, making backups**. These actions might also benefit from an abstraction.
+
+- Right now the generic database service renders a config file depending on the requested database technology. This is only done once through the help of flags. It might be interesting to change this behaviour and make sure that the config file re-renders when changes occur.

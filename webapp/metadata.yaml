@@ -14,3 +14,5 @@ requires:
     interface: generic-database
   mysqlgdb:
     interface: generic-database
+  mongogdb:
+    interface: generic-database

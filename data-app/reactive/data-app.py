@@ -16,13 +16,14 @@ from charms.reactive import Endpoint
 ###########################################################################
 
 @when('apache.available')
+@when_not('mysqldb.configured')
 def finishing_up_setting_up_sites():
     host.service_reload('apache2')
     set_flag('apache.start')
 
 
 @when('apache.start')
-@when_not('endpoint.mysqlgdb.connected')
+@when_not('mysqldb.configured')
 def waiting_for_db():
     host.service_reload('apache2')
     status_set('maintenance', 'Waiting for a gdb (mysql) relation')
@@ -34,12 +35,12 @@ def waiting_for_db():
 #                                                                      #
 ########################################################################
 
-# todo hier moet nog een concrete flag bij, als je connect op een niet concrete gdb mag er niets gebeuren
+
 @when('endpoint.mysqlgdb.joined')
-@when_not('endpoint.mysqlgdb.connected')
+@when_not('mysqldb.configured')
 def connect_mysql_db():
     endpoint = endpoint_from_flag('endpoint.mysqlgdb.joined')
-    endpoint.connect('dbusers')
+    endpoint.request('dbusers99')
     status_set('maintenance', 'Connect mysql gdb')
 
 
@@ -51,6 +52,7 @@ def connect_mysql_db():
 
 
 @when('endpoint.mysqlgdb.available')
+@when_not('mysqldb.configured')
 def mysql_render_config():
     
     mysql = endpoint_from_flag('endpoint.mysqlgdb.available')
@@ -63,7 +65,7 @@ def mysql_render_config():
         'gdb_password' : mysql.password(),
     })
     status_set('maintenance', 'Rendering config file')
-    set_flag('endpoint.mysqlgdb.connected')
+    set_flag('mysqldb.configured')
     set_flag('restart-app')
 
 @when('restart-app')

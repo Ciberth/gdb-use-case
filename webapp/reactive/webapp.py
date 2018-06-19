@@ -22,18 +22,22 @@ def finishing_up_setting_up_sites():
 
 
 @when('apache.start')
-@when_not('endpoint.postgresqlgdb.connected', 'endpoint.mysqlgdb.connected')
+@when_not('postgresdb.configured', 'mysqldb.configured', 'mongodb.configured')
 def waiting_for_db():
     host.service_reload('apache2')
     status_set('maintenance', 'Waiting for at least 1 generic database relation')
 
-@when_not('endpoint.postgresqlgdb.connected')
-def waiting_for_db():
+@when_not('postgresdb.configured')
+def waiting_for_db1():
     status_set('maintenance', 'Waiting for gdb (postgres) relation')
 
-@when_not('endpoint.mysqlgdb.connected')
-def waiting_for_db():
+@when_not('mysqldb.configured')
+def waiting_for_db2():
     status_set('maintenance', 'Waiting for gdb (mysql) relation')
+
+@when_not('mongodb.configured')
+def waiting_for_db3():
+    status_set('maintenance', 'Waiting for gdb (mongo) relation')
 
 ########################################################################
 #                                                                      #
@@ -43,18 +47,25 @@ def waiting_for_db():
 
 
 @when('endpoint.postgresqlgdb.joined')
-@when_not('endpoint.postgresqlgdb.connected')
+@when_not('postgresdb.configured')
 def request_postgresql_db():
     endpoint = endpoint_from_flag('endpoint.postgresqlgdb.joined')
-    endpoint.request('postgresql', 'dbitems')
+    endpoint.request('postgresql', 'dbitems99')
     status_set('maintenance', 'Requesting postgresql gdb')
 
 @when('endpoint.mysqlgdb.joined')
-@when_not('endpoint.mysqlgdb.connected')
+@when_not('mysqldb.configured')
 def request_mysql_db():
     endpoint = endpoint_from_flag('endpoint.mysqlgdb.joined')
-    endpoint.request('mysql', 'dbusers')
+    endpoint.request('mysql', 'dbusers99')
     status_set('maintenance', 'Requesting mysql gdb')
+
+@when('endpoint.mongogdb.joined')
+@when_not('mongodb.configured')
+def request_mongo_db():
+    endpoint = endpoint_from_flag('endpoint.mysqlgdb.joined')
+    endpoint.request('mongodb', 'dbmongo99')
+    status_set('maintenance', 'Requesting mongo gdb')
 
 
 ##################################################
@@ -65,6 +76,7 @@ def request_mysql_db():
 
 
 @when('endpoint.postgresqlgdb.available')
+@when_not('postgresdb.configured')
 def pgsql_render_config():
     
     pgsql = endpoint_from_flag('endpoint.postgresqlgdb.available')
@@ -77,10 +89,11 @@ def pgsql_render_config():
         'gdb_password' : pgsql.password(),
     })
     status_set('maintenance', 'Rendering config file')
-    set_flag('endpoint.postgresqlgdb.connected')
+    set_flag('postgresdb.configured')
     set_flag('restart-app')
 
 @when('endpoint.mysqlgdb.available')
+@when_not('mysqldb.configured')
 def mysql_render_config():
     
     mysql = endpoint_from_flag('endpoint.mysqlgdb.available')
@@ -93,7 +106,21 @@ def mysql_render_config():
         'gdb_password' : mysql.password(),
     })
     status_set('maintenance', 'Rendering config file')
-    set_flag('endpoint.mysqlgdb.connected')
+    set_flag('mysqldb.configured')
+    set_flag('restart-app')
+
+@when('endpoint.mongogdb.available')
+@when_not('mongodb.configured')
+def mongo_render_config():
+    
+    mongo = endpoint_from_flag('endpoint.mongogdb.available')
+
+    render('db-config.j2', '/var/www/webapp/mongo-config.html', {
+        'gdb_host' : mongo.host(),
+        'gdb_port' : mongo.port(),
+    })
+    status_set('maintenance', 'Rendering config file')
+    set_flag('mongodb.configured')
     set_flag('restart-app')
 
 @when('restart-app')
@@ -101,3 +128,10 @@ def restart_app():
     host.service_reload('apache2')
     clear_flag('restart-app')
     status_set('active', 'App ready')
+
+@when('postgresdb.configured','mysqldb.configured','mongodb.configured')
+def all_flags_set():
+    status_set('active', 'Webapp configured!)
+    set_flag('webapp.configured')
+    
+

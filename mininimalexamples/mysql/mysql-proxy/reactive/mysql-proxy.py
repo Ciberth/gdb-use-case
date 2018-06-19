@@ -54,7 +54,7 @@ def render_mysql_config():
 
     host.service_reload('apache2')
     set_flag('webapp.mysqlshared.configured')
-    status_set('active', 'mysql done!')
+    status_set('active', 'mysql shared done!')
 
 ### 2. 
 
