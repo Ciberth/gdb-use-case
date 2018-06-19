@@ -19,4 +19,4 @@ requires:
   mysql-root:
     interface: mysql-root
   mongodb:
-    interface: mongo
+    interface: mongodb
