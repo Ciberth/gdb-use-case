@@ -68,6 +68,9 @@ def request_postgresql_db():
             )
             status_set('active', 'Shared details!')
             clear_flag('endpoint.generic-database.postgresql.requested')
+        #else:
+            # requested database name and concrete databasename do not match
+            # Do nothing, or show error, choice to be made here...
     else: # not concrete
         pgsql_endpoint = endpoint_from_flag('pgsqldb.connected')
         pgsql_endpoint.set_database(databasename)
