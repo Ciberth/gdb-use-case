@@ -52,6 +52,7 @@ juju add-relation data-app db1
 
 ### More database technologies
 
+- MongoDB (right now you get dbhost + port + request databasename)
 - Neo4J
 - Cassandra
 - ...
